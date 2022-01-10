@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const String studentData = '''
   [{
@@ -12,6 +13,8 @@ const String studentData = '''
 	"city": "Taichung",
 	"country": "Nicaragua",
 	"countryCode": "GM",
+  "lat": "71.31071",
+  "long": "103.45517",
 	"email uses current data": "Olivette.Pacorro@gmail.com"
 },
 {
@@ -23,6 +26,8 @@ const String studentData = '''
 	"city": "Simferopol",
 	"country": "Gambia",
 	"countryCode": "FO",
+  "lat": "18.520430",
+  "long": "73.856743",
 	"email uses current data": "Laure.Elvyn@gmail.com"
 },
 {
@@ -34,6 +39,8 @@ const String studentData = '''
 	"city": "Simferopol",
 	"country": "Gambia",
 	"countryCode": "FO",
+  "lat": "19.075983",
+  "long": "72.877655",
 	"email uses current data": "Laure.Elvyn@gmail.com"
 },
 {
@@ -45,6 +52,8 @@ const String studentData = '''
 	"city": "Lviv",
 	"country": "Ecuador",
 	"countryCode": "JM",
+  "lat": "-36.77033",
+  "long": "-138.76761",
 	"email uses current data": "Vanessa.Alabaster@gmail.com"
 },
 {
@@ -56,6 +65,8 @@ const String studentData = '''
 	"city": "Valparaíso",
 	"country": "Sierra Leone",
 	"countryCode": "MP",
+  "lat": "-15.66592",
+  "long": "110.11740",
 	"email uses current data": "Belva.Atcliffe@gmail.com"
 }
 ]''';
@@ -69,6 +80,16 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List jsonData = json.decode(studentData);
+
+  void navigateTo(double? long, double? lat) async {
+    var uri =
+        Uri.parse("https://www.google.com/maps/search/?api=1&query=$lat,$long");
+    if (await canLaunch(uri.toString())) {
+      await launch(uri.toString());
+    } else {
+      throw 'Could not launch ${uri.toString()}';
+    }
+  }
 
   Future showModal(BuildContext context, Map<String, dynamic> json) {
     return showModalBottomSheet(
@@ -132,6 +153,26 @@ class _HomeState extends State<Home> {
                 'Email: ' + json['email uses current data'],
                 style: TextStyle(
                   fontSize: 15,
+                ),
+              ),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.blue),
+                  foregroundColor: MaterialStateProperty.all(Colors.white),
+                  padding: MaterialStateProperty.all(
+                    EdgeInsets.symmetric(horizontal: 30.0, vertical: 10.0),
+                  ),
+                ),
+                onPressed: () => navigateTo(
+                  double.parse(json['long']),
+                  double.parse(json['lat']),
+                ),
+                child: Text(
+                  'View Location ',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
